@@ -50,7 +50,7 @@ public class Drive extends SubsystemBase {
         currentHeadingRad = pinpoint.getHeading(AngleUnit.RADIANS);
 
         if (!headingInit) {
-            headingOffSet = currentHeadingRad -INIT_FIELD_OFFSET;
+            headingOffSet = currentHeadingRad - INIT_FIELD_OFFSET;
             headingInit = true;
         }
 

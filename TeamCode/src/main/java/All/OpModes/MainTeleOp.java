@@ -1,7 +1,5 @@
 package All.OpModes;
 
-import static All.Configs.Poses.FieldPoses.BLUE_GOAL;
-
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -12,13 +10,12 @@ import All.Commands.Drive.ResetFieldCentric;
 import All.Commands.Limelight.RecalibratePose;
 import All.Subsystems.Drive;
 import All.Subsystems.Limelight;
-import All.Subsystems.Turret;
 
-public class TestTeleOp extends CommandOpMode {
+public class MainTeleOp extends CommandOpMode {
 
     // SUBSYSTEMS
     private Drive drive;
-    private Turret turret;
+    // private Turret turret;
     private Limelight limelight;
 
     // GAMEPADS
@@ -38,7 +35,7 @@ public class TestTeleOp extends CommandOpMode {
                 .whenPressed(new ResetFieldCentric(drive));
 
         // TURRET
-        turret = new Turret(hardwareMap);
+        // turret = new Turret(hardwareMap);
 
         // LIMELIGHT
         limelight = new Limelight(hardwareMap);
@@ -63,7 +60,7 @@ public class TestTeleOp extends CommandOpMode {
         limelightWorking();
 
         // TURRET
-        turret.turretFollowPose(BLUE_GOAL, drive.getRobotPose(), drive.getRobotHeadingRad());
+        // turret.turretFollowPose(BLUE_GOAL, drive.getRobotPose(), drive.getRobotHeadingRad());
 
     }
 
