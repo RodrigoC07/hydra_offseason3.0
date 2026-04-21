@@ -9,14 +9,12 @@ import All.Commands.Drive.DriveCommand;
 import All.Commands.Drive.ResetFieldCentric;
 import All.Commands.Limelight.RecalibratePose;
 import All.Subsystems.Drive;
-import All.Subsystems.Limelight;
 
 public class MainTeleOp extends CommandOpMode {
 
     // SUBSYSTEMS
     private Drive drive;
     // private Turret turret;
-    private Limelight limelight;
 
     // GAMEPADS
     private GamepadEx gamepad1;
@@ -36,13 +34,6 @@ public class MainTeleOp extends CommandOpMode {
 
         // TURRET
         // turret = new Turret(hardwareMap);
-
-        // LIMELIGHT
-        limelight = new Limelight(hardwareMap);
-
-        limelight.switchPipeline(0);
-        limelight.start();
-
     }
 
     @Override
@@ -56,9 +47,6 @@ public class MainTeleOp extends CommandOpMode {
         drive.updatePinpoint();
         driveWorking();
 
-        // LIMELIGHT
-        limelightWorking();
-
         // TURRET
         // turret.turretFollowPose(BLUE_GOAL, drive.getRobotPose(), drive.getRobotHeadingRad());
 
@@ -68,13 +56,6 @@ public class MainTeleOp extends CommandOpMode {
 
         gamepad1.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(new ResetFieldCentric(drive));
-
-    }
-
-    public void limelightWorking () {
-
-        gamepad1.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new RecalibratePose(limelight));
 
     }
 
