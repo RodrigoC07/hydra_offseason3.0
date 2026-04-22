@@ -83,7 +83,7 @@ public class Drive extends SubsystemBase {
 
     }
 
-    // SET AND GETS
+    // SET AND GET
     public void setStartPose (Pose startPose) {follower.setStartingPose(startPose);}
 
     public Pose getRobotPose () {return follower.getPose();}

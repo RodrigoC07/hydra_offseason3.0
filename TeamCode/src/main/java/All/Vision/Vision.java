@@ -37,8 +37,12 @@ public class Vision {
         UPSIDE_DOWN,
     }
 
-    public Vision (HardwareMap hwmap) {
+    public Vision (HardwareMap hwmap,Pose3D cameraPoseOnRobot, CAMERA_ORIENTATION cameraOrientation) {
         limelight = hwmap.get(Limelight3A.class, "limelight");
+        this.cameraPoseOnRobot = cameraPoseOnRobot;
+        this.cameraOrientation = cameraOrientation;
+        localizationAprilTags.add(20);
+        localizationAprilTags.add(24);
 
         if (BLUE_SIDE) {
             APRIL_TAG_PIPELINE = 0;
@@ -48,23 +52,62 @@ public class Vision {
 
     }
 
-//    public Pose GetBotPoseMT1 (Pose odometryPose) {
-//
-//        if (limelight.isRunning()) limelight.start();
-//        limelight.pipelineSwitch(APRIL_TAG_PIPELINE);
-//        LLResult result = limelight.getLatestResult();
-//
-//        if (result != null && result.isValid()) {
-//            List<LLResultTypes.FiducialResult> aprilTags = result.getFiducialResults();
-//
-//            for (LLResultTypes.FiducialResult aprilTag : aprilTags) {
-//                if (localizationAprilTags.contains(aprilTag.getFiducialId())) {
-//
-//                }
-//            }
-//
-//        }
-//
-//    }
+    public Pose GetBotPoseMT1 (Pose odometryPose) {
+
+        if (limelight.isRunning()) limelight.start();
+        limelight.pipelineSwitch(APRIL_TAG_PIPELINE);
+        LLResult result = limelight.getLatestResult();
+
+        double odometryHeading = odometryPose.getHeading();
+        Pose out = null;
+
+        if (result != null && result.isValid()) {
+            List<LLResultTypes.FiducialResult> aprilTags = result.getFiducialResults();
+
+            for (LLResultTypes.FiducialResult aprilTag : aprilTags) {
+                if (localizationAprilTags.contains(aprilTag.getFiducialId())) {
+
+                    Pose aprilTagPose = limelightToPedroPose(result.getBotpose());
+                    double aprilTagHeading = aprilTagPose.getHeading();
+
+                    double diffDeg = (aprilTagHeading - odometryHeading + 540) % 360 - 180;
+                    double diffRad = Math.toRadians(diffDeg);
+                    double headingDiff = Math.abs(diffRad);
+
+                    double dist = Math.hypot(aprilTagPose.getX() - aprilTagPose.getY(), aprilTagPose.getY() - aprilTagPose.getX());
+
+                    out = aprilTagPose;
+
+                }
+            }
+        }
+        else return null;
+
+        return out;
+    }
+
+
+    // CALCS
+    public Pose limelightToPedroPose(Pose3D llPose) {
+        double llX = llPose.getPosition().toUnit(DistanceUnit.INCH).x;
+        double llY = llPose.getPosition().toUnit(DistanceUnit.INCH).y;
+        double llYaw = llPose.getOrientation().getYaw(AngleUnit.RADIANS);
+
+        double xTransformed = llY + 72;
+        double yTransformed = 72 - llX;
+        double yawTransformedDeg = limelightToStandardYaw(llYaw);
+        double yamTransformedRad = Math.toRadians(yawTransformedDeg);
+
+        return new Pose(xTransformed, yTransformed, yamTransformedRad);
+    }
+
+    public double limelightToStandardYaw(double llYawDegrees){
+        double yawTransformed = (llYawDegrees + 270) % 360;
+
+        if (yawTransformed < 0) {
+            yawTransformed += 360;
+        }
+        return yawTransformed;
+    }
 
 }

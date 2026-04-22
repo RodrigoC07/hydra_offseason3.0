@@ -46,6 +46,6 @@ public class SubsystemTest extends SubsystemBase {
 
     public void closeClaw() { clawServo.setPosition(closeClawPos); }
 
-    public void openClaw() { clawServo.setPosition(openClawPos); }
+    public void openClaw() { clawServo.setPosition(openClawPos);}
 
 }
