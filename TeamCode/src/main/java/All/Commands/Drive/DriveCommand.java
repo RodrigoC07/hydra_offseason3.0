@@ -26,7 +26,7 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute () {
 
-        double x = apllyDeadZone(-gamepad.getLeftX());
+        double x = apllyDeadZone(gamepad.getLeftX());
         double y = apllyDeadZone(-gamepad.getLeftY());
         double turn = apllyDeadZone(gamepad.getRightX());
 

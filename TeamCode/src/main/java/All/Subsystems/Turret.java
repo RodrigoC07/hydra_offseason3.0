@@ -15,9 +15,8 @@ public class Turret extends SubsystemBase {
     private DcMotorEx turretMotor;
 
     // MOTOR CONSTANTS
-    private double motorCurrentTicks = turretMotor.getCurrentPosition();
+    private double motorCurrentTicks;
     private double TICKS_PER_REV = 537.7;
-    private double motorTicksError = 0;
 
     // TURRET CONSTANTS
     private double GEAR_RATIO = 3.906976744186047;
@@ -35,6 +34,8 @@ public class Turret extends SubsystemBase {
     public Turret (HardwareMap hwMap) {
         turretMotor = hwMap.get(DcMotorEx.class, "turret");
 
+        motorCurrentTicks = turretMotor.getCurrentPosition();
+
         turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         turretMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -46,7 +47,10 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
+
         pidf.setCoefficients(new PIDFCoefficients(kP, 0, kD, kF));
+        motorCurrentTicks = turretMotor.getCurrentPosition();
+
     }
 
     // TURRET FOLLOWER
@@ -56,6 +60,7 @@ public class Turret extends SubsystemBase {
         double distanceY = fieldTarget.getY() - robotPose.getY();
 
         turretTargetRad = Math.atan2(distanceY, distanceX);
+        updateTurret(robotHeading);
     }
 
     // UPDATE TURRET
@@ -68,13 +73,13 @@ public class Turret extends SubsystemBase {
 
         double motorErrorTicks = motorTargetTicks - motorCurrentTicks;
 
-        if (Math.abs(motorTicksError) < 4) {
+        if (Math.abs(motorErrorTicks) < 4) {
             turretMotor.setPower(0);
             pidf.reset();
             return;
         }
 
-        pidf.updateError(motorTicksError);
+        pidf.updateError(motorErrorTicks);
         pidf.updateFeedForwardInput(0);
 
         double turretMotorPower = pidf.run();

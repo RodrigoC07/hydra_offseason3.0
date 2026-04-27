@@ -1,7 +1,6 @@
 package All.Subsystems;
 
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -17,19 +16,29 @@ public class Limelight_AprilTag extends SubsystemBase {
 
     Vision vision;
     Drive drive;
-    Pose odometryPose = drive.getRobotPose();
-    Pose limelightPose = vision.GetBotPoseMT1(odometryPose);
+    Pose odometryPose;
+    Pose limelightPose;
 
-    public Limelight_AprilTag (HardwareMap hwMap) {
+    public Limelight_AprilTag (HardwareMap hwMap, Drive drive) {
 
-        vision = new Vision(hwMap,vision.cameraPoseOnRobot, vision.cameraOrientation);
-        drive = new Drive(hwMap);
+        this.drive = new Drive(hwMap);
+
+        vision = new Vision(hwMap,
+        new Pose3D(
+        new Position(DistanceUnit.METER, 0.19, 0.107,0.245,0),
+        new YawPitchRollAngles(AngleUnit.DEGREES, 3, 0.0, 0.0, 0)));
 
         vision.BLUE_SIDE = true;
+        odometryPose = drive.getRobotPose();
+        limelightPose = vision.GetBotPoseMT1(odometryPose);
+
     }
 
     @Override
     public void periodic() {
+
+        odometryPose = drive.getRobotPose();
+        limelightPose = vision.GetBotPoseMT1(odometryPose);
 
     }
 

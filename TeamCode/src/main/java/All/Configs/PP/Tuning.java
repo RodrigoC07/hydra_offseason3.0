@@ -25,6 +25,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import All.Configs.PP.Constants;
+
 /**
  * This is the Tuning class. It contains a selection menu for various tuning OpModes.
  *
