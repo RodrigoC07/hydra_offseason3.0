@@ -30,9 +30,6 @@ public class MainTeleOp extends CommandOpMode {
     private Limelight_AprilTag limelightAprilTag;
     private Turret turret;
 
-    // CLASSES
-    private Vision vision;
-
     // GAMEPADS
     private GamepadEx gamepad1Ex;
 
@@ -50,17 +47,10 @@ public class MainTeleOp extends CommandOpMode {
         gamepad1Ex.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(new ResetFieldCentric(drive));
 
-        // VISION
-        vision = new Vision(
-                hardwareMap,
-                new Pose3D(
-                new Position(DistanceUnit.METER, 0.19, 0.107,0.245,0),
-                new YawPitchRollAngles(AngleUnit.DEGREES, 3, 0.0, 0.0, 0)));
-
         // LIMELIGHT
         limelightAprilTag = new Limelight_AprilTag(hardwareMap, drive);
 
-        gamepad1Ex.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+        gamepad1Ex.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new RecalibratePose(limelightAprilTag));
 
         // TURRET
@@ -83,8 +73,8 @@ public class MainTeleOp extends CommandOpMode {
         turret.turretFollowPose(BLUE_GOAL, drive.getRobotPose(), drive.getRobotHeadingRad());
 
         // TELEMETRY
-        telemetry.addData("Odometry Pose :", drive.getRobotPose());
-        telemetry.addData("LimelightPose", vision.GetBotPoseMT1(drive.getRobotPose()));
+        telemetry.addData("Odometry Pose", drive.getRobotPose());
+        telemetry.addData("Limelight Pose", limelightAprilTag.getLimelightPose());
         telemetry.update();
     }
 

@@ -67,7 +67,7 @@ public class Drive extends SubsystemBase {
         double robotHeading = currentHeadingRad - headingOffSet;
 
         double fieldX = x * Math.cos(-robotHeading) - y * Math.sin(-robotHeading);
-        double fieldY = x * Math.sin(-robotHeading) - y * Math.cos(-robotHeading);
+        double fieldY = x * Math.sin(-robotHeading) + y * Math.cos(-robotHeading);
 
         double denominator = Math.max(Math.abs(fieldY) + Math.abs(fieldX) + Math.abs(turn), 1);
 

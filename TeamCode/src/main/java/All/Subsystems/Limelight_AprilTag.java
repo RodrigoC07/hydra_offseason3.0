@@ -21,7 +21,7 @@ public class Limelight_AprilTag extends SubsystemBase {
 
     public Limelight_AprilTag (HardwareMap hwMap, Drive drive) {
 
-        this.drive = new Drive(hwMap);
+        this.drive = drive;
 
         vision = new Vision(hwMap,
         new Pose3D(
@@ -43,6 +43,11 @@ public class Limelight_AprilTag extends SubsystemBase {
     }
 
     // COMMANDS
-    public void recalibratePose () { limelightPose = odometryPose; }
+    public void recalibratePose () { odometryPose = limelightPose; }
+
+    // GET AND SET
+    public Pose getLimelightPose() {
+        return limelightPose;
+    }
 
 }

@@ -51,7 +51,7 @@ public class Vision {
 
     public Pose GetBotPoseMT1 (Pose odometryPose) {
 
-        if (limelight.isRunning()) limelight.start();
+        if (!limelight.isRunning()) limelight.start();
         limelight.pipelineSwitch(APRIL_TAG_PIPELINE);
         LLResult result = limelight.getLatestResult();
 
@@ -64,7 +64,7 @@ public class Vision {
             for (LLResultTypes.FiducialResult aprilTag : aprilTags) {
                 if (localizationAprilTags.contains(aprilTag.getFiducialId())) {
 
-                    Pose aprilTagPose = getLimelightToPedroPose(result);
+                    Pose aprilTagPose = getLimelightToPedroPose(result.getBotpose());
                     double aprilTagHeading = aprilTagPose.getHeading();
 
                     double diffDeg = (aprilTagHeading - odometryHeading + 540) % 360 - 180;
@@ -83,37 +83,18 @@ public class Vision {
         return out;
     }
 
-
     // CALCS
-    public Pose getLimelightToPedroPose (LLResult result) {
+    public Pose getLimelightToPedroPose (Pose3D llPose) {
 
-        Pose3D megaTagPose = result.getBotpose();
+        double llX = llPose.getPosition().toUnit(DistanceUnit.INCH).x;
+        double llY = llPose.getPosition().toUnit(DistanceUnit.INCH).y;
+        double llYam = llPose.getOrientation().getYaw(AngleUnit.RADIANS);
 
-        Pose2D ftc2DStandartPose = new Pose2D(
-            DistanceUnit.INCH,
-            -megaTagPose.getPosition().x,
-            megaTagPose.getPosition().y,
-            AngleUnit.RADIANS,
-            megaTagPose.getOrientation().getYaw()
-        );
+        double xTransformed = llY + 72.04;
+        double yTransformed = 72.03 - llX;
+        double yamTransformed = Math.abs(llYam);
 
-        Pose ftcStandartPose = PoseConverter.pose2DToPose(ftc2DStandartPose, InvertedFTCCoordinates.INSTANCE);
-
-        Pose out =
-            ftcStandartPose.getAsCoordinateSystem(
-                    PedroCoordinates.INSTANCE
-            );
-
-        return out;
-    }
-
-    public double limelightToStandardYaw(double llYawDegrees){
-        double yawTransformed = (llYawDegrees + 270) % 360;
-
-        if (yawTransformed < 0) {
-            yawTransformed += 360;
-        }
-        return yawTransformed;
+        return new Pose(xTransformed, yTransformed, yamTransformed);
     }
 
 }
