@@ -50,9 +50,6 @@ public class MainTeleOp extends CommandOpMode {
         // LIMELIGHT
         limelightAprilTag = new Limelight_AprilTag(hardwareMap, drive);
 
-        gamepad1Ex.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new RecalibratePose(limelightAprilTag));
-
         // TURRET
         turret = new Turret(hardwareMap);
     }

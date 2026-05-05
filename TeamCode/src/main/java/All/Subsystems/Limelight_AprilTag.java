@@ -42,9 +42,6 @@ public class Limelight_AprilTag extends SubsystemBase {
 
     }
 
-    // COMMANDS
-    public void recalibratePose () { odometryPose = limelightPose; }
-
     // GET AND SET
     public Pose getLimelightPose() {
         return limelightPose;
