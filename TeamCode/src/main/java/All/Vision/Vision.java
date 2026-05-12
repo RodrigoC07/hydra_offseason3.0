@@ -1,8 +1,7 @@
 package All.Vision;
 
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.geometry.PedroCoordinates;
+import static java.lang.Double.NaN;
+
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -11,7 +10,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -30,6 +28,7 @@ public class Vision {
     // APRIL TAGS
     public boolean BLUE_SIDE = true;
     public int APRIL_TAG_PIPELINE = 0;
+    public int ARTIFACT_PIPELINE = 3;
     List<Integer> localizationAprilTags = new ArrayList<>();
 
     // NEURAL DETECTION
@@ -82,6 +81,45 @@ public class Vision {
 
         return out;
     }
+
+    public List<List<Artifact>> getArtifacts (Pose PedroPose) {
+
+        if (!limelight.isRunning()) limelight.start();
+        limelight.pipelineSwitch(ARTIFACT_PIPELINE);
+        LLResult result = limelight.getLatestResult();
+
+        List<Artifact> groundArtifacts = new ArrayList<>();
+
+        if (result == null || !result.isValid()) {
+            List<List<Artifact>> out = new ArrayList<>();
+            out.add(groundArtifacts);
+            return out;
+        }
+
+
+        for (LLResultTypes.DetectorResult detectorResult : result.getDetectorResults()) {
+            Artifact artifact = new Artifact(detectorResult, PedroPose);
+
+            if (artifact.artifactType == Artifact.ARTIFACT_TYPE.GROUND) {
+                groundArtifacts.add(artifact);
+            }
+
+        }
+
+            List<List<Artifact>> out = new ArrayList<>();
+            out.add(groundArtifacts);
+
+            return out;
+        }
+
+//        public Double intakeAngleToArtifact (List<Artifact> artifacts, Pose botPose, int stepDeg) {
+//            if (artifacts.isEmpty()) return null;
+//
+//            double bestAngle = NaN;
+//            final double MAX_RELEVANT_DISTANCE = 70;
+//
+//
+//        }
 
     // CALCS
     public Pose getLimelightToPedroPose (Pose3D llPose) {
