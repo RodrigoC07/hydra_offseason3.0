@@ -28,11 +28,12 @@ public class Vision {
     // APRIL TAGS
     public boolean BLUE_SIDE = true;
     public int APRIL_TAG_PIPELINE = 0;
-    public int ARTIFACT_PIPELINE = 3;
     List<Integer> localizationAprilTags = new ArrayList<>();
 
     // NEURAL DETECTION
-    public int NEURAL_PIPELINE = 3;
+    public int ARTIFACT_PIPELINE = 3;
+    public final double HORIZONTAL_FOV = 54.4;
+    public final double INTAKING_WIDTH_INCHES = 7.795;
 
     public Vision (HardwareMap hwmap,Pose3D cameraPoseOnRobot) {
         limelight = hwmap.get(Limelight3A.class, "limelight");
@@ -112,14 +113,73 @@ public class Vision {
             return out;
         }
 
-//        public Double intakeAngleToArtifact (List<Artifact> artifacts, Pose botPose, int stepDeg) {
-//            if (artifacts.isEmpty()) return null;
-//
-//            double bestAngle = NaN;
-//            final double MAX_RELEVANT_DISTANCE = 70;
-//
-//
-//        }
+        public Double intakeAngleToArtifact (List<Artifact> artifacts, Pose botPose, int stepDeg) {
+            if (artifacts.isEmpty()) return null;
+
+            double bestAngle = NaN;
+            double bestScore = Double.NEGATIVE_INFINITY;
+
+            final double MAX_RELEVANT_DISTANCE = 70;
+
+            double w1 = 10;
+            double w2 = 4;
+            double w3 = 1;
+
+            double horizontalLeftBound = Math.toDegrees(botPose.getHeading()) + (HORIZONTAL_FOV / 2);
+            double horizontalRightBound = Math.toDegrees(botPose.getHeading()) - (HORIZONTAL_FOV / 2);
+
+            for (double angleDeg = horizontalLeftBound; angleDeg >= horizontalRightBound; angleDeg -= stepDeg) {
+
+                double theta = Math.toRadians(angleDeg);
+                double cos = Math.cos(theta);
+                double sin = Math.sin(theta);
+
+                int count = 0;
+                double totalDist = 0;
+                double totalPerpendicularDist = 0;
+
+                for (Artifact artifact : artifacts) {
+
+                    double rx = artifact.x - botPose.getX();
+                    double ry = artifact.y - botPose.getY();
+
+                    double perpendicularDist = Math.abs(rx * sin - ry * cos);
+                    double distance = Math.hypot(rx, ry);
+
+                    if (perpendicularDist < INTAKING_WIDTH_INCHES / 2) {
+                        count++;
+                        totalPerpendicularDist += perpendicularDist;
+                        totalDist += distance;
+                    }
+
+                }
+
+                if (count > 0) {
+
+                    double avgPerpendicularDist = totalPerpendicularDist / count;
+                    double avgDist = totalDist / count;
+
+                    double normCount = count / (double) artifacts.size();
+                    double normPerpendicular = avgPerpendicularDist / (INTAKING_WIDTH_INCHES / 2);
+                    double normDist = avgDist / MAX_RELEVANT_DISTANCE;
+
+                    double score = w1 * normCount - w2 * normPerpendicular - w3 * normDist;
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestAngle = theta;
+
+                    }
+                }
+
+            }
+
+            if (Double.isNaN(bestAngle)) return null;
+            double bestAngleDeg = Math.toDegrees(bestAngle);
+            if (bestAngleDeg < 0) bestAngleDeg += 360;
+
+            return bestAngleDeg;
+        }
 
     // CALCS
     public Pose getLimelightToPedroPose (Pose3D llPose) {

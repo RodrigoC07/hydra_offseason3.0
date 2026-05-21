@@ -23,10 +23,10 @@ public class Artifact {
     public double z;
 
     // LIMELIGHT
-    public final double fx = 0.0;
-    public final double fy = 0.0;
-    public final double cx = 0.0;
-    public final double cy = 0.0;
+    public final double fx = 1221.445;
+    public final double fy = 1223.398;
+    public final double cx = 637.226;
+    public final double cy = 502.549;
     public final double fxNN = fx / 4;
     public final double fyNN = fy / 4;
     public final double cxNN = cx / 4;

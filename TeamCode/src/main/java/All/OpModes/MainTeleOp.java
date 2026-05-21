@@ -8,19 +8,11 @@ import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
 import All.Commands.Drive.DriveCommand;
 import All.Commands.Drive.ResetFieldCentric;
-import All.Commands.Limelight.RecalibratePose;
 import All.Subsystems.Drive;
 import All.Subsystems.Limelight_AprilTag;
 import All.Subsystems.Turret;
-import All.Vision.Vision;
 
 @TeleOp
 public class MainTeleOp extends CommandOpMode {
