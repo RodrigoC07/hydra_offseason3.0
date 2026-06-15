@@ -39,7 +39,6 @@ public class SubsystemTest extends SubsystemBase {
     }
 
     // COMMANDS
-
     public void downLift () { liftMotor.setTargetPosition(lowPos); }
 
     public void upLift () { liftMotor.setTargetPosition(highPos); }
@@ -48,4 +47,8 @@ public class SubsystemTest extends SubsystemBase {
 
     public void openClaw() { clawServo.setPosition(openClawPos);}
 
+    // GET AND SET
+    public double liftMotorPosition () { return liftMotor.getCurrentPosition(); }
+
+    public double clawServoPosition () { return clawServo.getPosition(); }
 }

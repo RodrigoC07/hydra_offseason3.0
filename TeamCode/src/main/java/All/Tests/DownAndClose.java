@@ -1,20 +1,22 @@
 package All.Tests;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 
-public class DownAndOpen extends ParallelCommandGroup {
+public class DownAndClose extends ParallelCommandGroup {
 
     // SUBSYSTEMS
     private final SubsystemTest subsystemTest;
 
     // CONSTANTS
 
-    public DownAndOpen (SubsystemTest subsystemTest) {
+    public DownAndClose(SubsystemTest subsystemTest) {
         this.subsystemTest =  subsystemTest;
 
         addCommands(
-
+                new liftDown(subsystemTest),
+                new WaitCommand(2000),
+                new clawClose(subsystemTest)
         );
 
         addRequirements(subsystemTest);
