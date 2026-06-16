@@ -5,21 +5,14 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 
 public class DownAndClose extends ParallelCommandGroup {
 
-    // SUBSYSTEMS
-    private final SubsystemTest subsystemTest;
-
-    // CONSTANTS
-
-    public DownAndClose(SubsystemTest subsystemTest) {
-        this.subsystemTest =  subsystemTest;
+    public DownAndClose(SubsystemClawTest subsystemClawTest, SubsystemLiftTest subsystemLiftTest) {
 
         addCommands(
-                new liftDown(subsystemTest),
-                new WaitCommand(2000),
-                new clawClose(subsystemTest)
+            new liftDown(subsystemLiftTest),
+            new WaitCommand(2000),
+            new clawClose(subsystemClawTest)
         );
 
-        addRequirements(subsystemTest);
     }
 
 }

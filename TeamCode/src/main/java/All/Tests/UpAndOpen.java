@@ -5,21 +5,14 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 
 public class UpAndOpen extends ParallelCommandGroup {
 
-    // SUBSYSTEMS
-    private final SubsystemTest subsystemTest;
-
-    // CONSTANTS
-
-    public UpAndOpen(SubsystemTest subsystemTest) {
-        this.subsystemTest =  subsystemTest;
+    public UpAndOpen(SubsystemClawTest subsystemClawTest, SubsystemLiftTest subsystemLiftTest) {
 
         addCommands(
-            new liftUp(subsystemTest),
+            new liftUp(subsystemLiftTest),
             new WaitCommand(2000),
-            new clawOpen(subsystemTest)
+            new clawOpen(subsystemClawTest)
         );
 
-        addRequirements(subsystemTest);
     }
 
 }

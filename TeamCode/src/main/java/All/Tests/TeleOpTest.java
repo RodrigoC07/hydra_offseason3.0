@@ -9,7 +9,8 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 public class TeleOpTest extends CommandOpMode {
 
     // SUBSYSTEMS
-    private SubsystemTest subsystemTest;
+    private SubsystemClawTest subsystemClawTest;
+    private SubsystemLiftTest subsystemLiftTest;
 
     // GAMEPADS
     private GamepadEx gamepad1Ex;
@@ -21,20 +22,24 @@ public class TeleOpTest extends CommandOpMode {
         gamepad1Ex = new GamepadEx(gamepad1);
 
         // SUBSYSTEMS
-        subsystemTest = new SubsystemTest(hardwareMap);
+        subsystemClawTest = new SubsystemClawTest(hardwareMap);
+        subsystemLiftTest = new SubsystemLiftTest(hardwareMap);
 
         gamepad1Ex.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new UpAndOpen(subsystemTest));
+                .whenPressed(new UpAndOpen(subsystemClawTest, subsystemLiftTest));
 
         gamepad1Ex.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new DownAndClose(subsystemTest));
+                .whenPressed(new DownAndClose(subsystemClawTest, subsystemLiftTest));
 
     }
 
     @Override
     public void run() {
+        super.run();
 
-        telemetry.addData("liftMotor", subsystemTest.liftMotorPosition());
-        telemetry.addData("clawServo", subsystemTest.clawServoPosition());
+        telemetry.addData("liftMotor", subsystemLiftTest.liftMotorPosition());
+        telemetry.addData("clawServo", subsystemClawTest.clawServoPosition());
+        telemetry.update();
     }
+
 }
