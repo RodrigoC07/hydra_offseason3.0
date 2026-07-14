@@ -1,9 +1,9 @@
 package All.Tests;
 
-import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
-public class UpAndOpen extends ParallelCommandGroup {
+public class UpAndOpen extends SequentialCommandGroup {
 
     public UpAndOpen(SubsystemClawTest subsystemClawTest, SubsystemLiftTest subsystemLiftTest) {
 

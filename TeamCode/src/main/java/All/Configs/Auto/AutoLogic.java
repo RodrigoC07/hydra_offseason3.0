@@ -24,6 +24,7 @@ public class AutoLogic {
     public liftState state = liftState.IDLE;
 
     public void init (HardwareMap hwMap) {
+
         liftSubsystem = new SubsystemLiftTest(hwMap);
         clawSubsystem = new SubsystemClawTest(hwMap);
 

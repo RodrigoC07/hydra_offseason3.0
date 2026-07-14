@@ -5,6 +5,7 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import All.Configs.Auto.AutoLogic;
 import All.Configs.PP.Constants;
@@ -13,7 +14,6 @@ import All.Configs.PP.Constants;
 public class MainAuto extends OpMode {
 
     // CONSTANTS
-    private Follower follower;
     private Timer pathTimer, opModeTimer;
     private ElapsedTime time = new ElapsedTime();
     private AutoLogic autoLogic = new AutoLogic();
@@ -60,7 +60,6 @@ public class MainAuto extends OpMode {
         opModeTimer = new Timer();
         time.reset();
 
-        follower = Constants.createFollower(hardwareMap);
         autoLogic.init(hardwareMap);
 
         autoState = AutoState.LIFT1;
@@ -70,7 +69,7 @@ public class MainAuto extends OpMode {
     @Override
     public void loop() {
 
-        follower.update();
+        CommandScheduler.getInstance().run();
         autoLogic.update();
         autoStateUpdate();
 
