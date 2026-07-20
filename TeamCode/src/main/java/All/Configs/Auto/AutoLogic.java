@@ -1,7 +1,7 @@
 package All.Configs.Auto;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 
 import All.Tests.SubsystemClawTest;
 import All.Tests.SubsystemLiftTest;
@@ -13,57 +13,52 @@ public class AutoLogic {
     private SubsystemClawTest clawSubsystem;
     private SubsystemLiftTest liftSubsystem;
 
-    // CONSTANTS
-    public final ElapsedTime timer = new ElapsedTime();
-    public enum liftState {
+    public enum SubsystemsStates {
         IDLE,
-        UP_OPEN,
-        DOWN_CLOSE,
+        UP_AND_OPEN,
+        DOWN_AND_CLOSE,
         STOP
     }
-    public liftState state = liftState.IDLE;
+
+    public SubsystemsStates subsystemsStates;
 
     public void init (HardwareMap hwMap) {
 
         liftSubsystem = new SubsystemLiftTest(hwMap);
         clawSubsystem = new SubsystemClawTest(hwMap);
 
-    }
+        subsystemsStates = SubsystemsStates.IDLE;
 
-    public void UP_OPEN () {
-        state = liftState.UP_OPEN;
-        new UpAndOpen(clawSubsystem, liftSubsystem);
-    }
-
-    public void DOWN_CLOSE () {
-        state = liftState.DOWN_CLOSE;
-        new UpAndOpen(clawSubsystem, liftSubsystem);
-    }
-
-    public void STOP () {
-        state = liftState.STOP;
-        stopAll();
     }
 
     public boolean isBusy () {
-        return state != liftState.IDLE;
+        return subsystemsStates != SubsystemsStates.IDLE;
     }
 
-    public void stopAll () {
-        state = liftState.IDLE;
+    public InstantCommand up_open () {
+        return new InstantCommand(() -> {new UpAndOpen(clawSubsystem, liftSubsystem);});
     }
 
-    public void update () {
+    public InstantCommand down_close () {
+        return new InstantCommand(() -> {new UpAndOpen(clawSubsystem, liftSubsystem);});
+    }
 
-        switch (state) {
+    public void updateAutoLogic () {
+
+        switch (subsystemsStates) {
 
             case IDLE:
+                if (!isBusy()) {
+                    subsystemsStates = SubsystemsStates.UP_AND_OPEN;
+                }
                 break;
 
-            case UP_OPEN:
+            case UP_AND_OPEN:
+                up_open();
                 break;
 
-            case DOWN_CLOSE:
+            case DOWN_AND_CLOSE:
+                down_close();
                 break;
 
             case STOP:

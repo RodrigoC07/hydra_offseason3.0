@@ -1,68 +1,49 @@
 package All.OpModes;
 
-import com.pedropathing.follower.Follower;
-import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import All.Configs.Auto.AutoLogic;
-import All.Configs.PP.Constants;
 
 @Autonomous
 public class MainAuto extends OpMode {
 
     // CONSTANTS
-    private Timer pathTimer, opModeTimer;
-    private ElapsedTime time = new ElapsedTime();
     private AutoLogic autoLogic = new AutoLogic();
 
     public enum AutoState {
-
-        LIFT1,
-        DOWN1,
-        END
-
+        UP_AND_OPEN1,
+        DOWN_AND_CLOSE1
     }
 
     AutoState autoState;
 
-    public void setAutoState(AutoState newState) {
-        autoState = newState;
-        pathTimer.resetTimer();
-    }
-
     public void autoStateUpdate () {
 
         switch (autoState) {
-            case LIFT1:
-                autoLogic.UP_OPEN();
-                setAutoState(AutoState.DOWN1);
-                break;
-            case DOWN1:
-                autoLogic.DOWN_CLOSE();
-                setAutoState(AutoState.END);
-                break;
-            case END:
-                autoLogic.STOP();
+
+            case UP_AND_OPEN1:
+                autoLogic.up_open();
+                setAutoState(AutoState.DOWN_AND_CLOSE1);
+            case DOWN_AND_CLOSE1:
+                autoLogic.down_close();
                 break;
 
         }
 
-
     }
+
+    public void setAutoState (AutoState newState) {
+        autoState = newState;
+    }
+
 
     @Override
     public void init() {
 
-        pathTimer = new Timer();
-        opModeTimer = new Timer();
-        time.reset();
-
         autoLogic.init(hardwareMap);
-
-        autoState = AutoState.LIFT1;
+        autoState = AutoState.UP_AND_OPEN1;
 
     }
 
@@ -70,13 +51,13 @@ public class MainAuto extends OpMode {
     public void loop() {
 
         CommandScheduler.getInstance().run();
-        autoLogic.update();
+        autoLogic.updateAutoLogic();
         autoStateUpdate();
-
+        
     }
 
     @Override
     public void stop() {
-        autoLogic.stopAll();
+
     }
 }
